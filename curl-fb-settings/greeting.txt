@@ -1,0 +1,13 @@
+curl -X POST -H "Content-Type: application/json" -d '{
+  "get_started": {"payload":"GET_STARTED_FIRSTBOT"},
+  "greeting": [
+    {
+      "locale": "default",
+      "text": "Hi {{user_first_name}}, Soy un bot hecho a manita"
+    },
+    {
+      "locale": "en_US",
+      "text": "Hi {{user_first_name}}, I am a handmade bot"
+    }
+  ]
+}' "https://graph.facebook.com/v2.11/me/messenger_profile?access_token=<ACCESS_TOKEN>"

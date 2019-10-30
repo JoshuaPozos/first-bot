@@ -2,7 +2,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
-const access_token = "EAAGDfCSwi3MBAOva0v6eQFKgFdJQswZC5aF1hnpCptOZCmTxCdRDuA5ZAj1eQ2LKffGP8HZCwCNDjeuZAyCLNJeqlpa3L9qAXdoMSDspJS5YDR2P3UZAYQS7rZCx7tXRiQoOBy391rlcILEE4syJyxFId8cJtsUndpNeuGZCW2irenMRspPyQZBRFDXqgxHgb794ZD"
+const access_token =
+  "";
 
 /*
  * Extend of express
@@ -41,44 +42,84 @@ app.post("/webhook/", function(req, res) {
   const webhook_event = req.body.entry[0];
   if (webhook_event.messaging) {
     webhook_event.messaging.forEach(e => {
-      handleMessage(e)
+      handleEvent(e.sender.id, e);
     });
   }
   res.sendStatus(200);
 });
 
-function handleMessage(e) {
-  const senderId = e.sender.id;
-  const messageText = e.message.text;
+function handleEvent(senderId, e) {
+  if (e.message) {
+    handleMessage(senderId, e.message);
+  } else if (e.postback) {
+    handlePostback(senderId, e.postback.payload);
+  }
+}
+
+function handleMessage(senderId, e) {
+  if (e.text) {
+    defaultMessage(senderId);
+  } else if (e.attachments) {
+    handleAttachments(senderId, e);
+  }
+}
+
+function handlePostback(senderId, payload) {
+  switch (payload) {
+    case "GET_STARTED_FIRSTBOT":
+      console.log(payload);
+      break;
+  }
+}
+
+function handleAttachments(senderId, e) {
+  let attachment_type = e.attachments[0].type;
+  switch (attachment_type) {
+    case "image":
+      console.log(attachment_type);
+    break;
+    case "video":
+      console.log(attachment_type);
+    break;
+    case "audio":
+      console.log(attachment_type);
+    break;
+    case "file":
+      console.log(attachment_type);
+    break;
+  }
+}
+
+function defaultMessage(senderId) {
   const messageData = {
     recipient: {
       id: senderId
     },
     message: {
-      text: messageText
+      text: "Hi, soy un bot de messenger. Te invito a utilizar nuestro menu."
     }
-  }
-  callSendApi(messageData)
+  };
+  callSendApi(messageData);
 }
 
 function callSendApi(res) {
-  request({
-    "uri": "https://graph.facebook.com/v2.11/me/messages",
-    "qs": {
-      "access_token": access_token
+  request(
+    {
+      uri: "https://graph.facebook.com/v2.11/me/messages",
+      qs: {
+        access_token: access_token
+      },
+      method: "POST",
+      json: res
     },
-    "method": "POST",
-    "json": res
-  },
-  err => {
-    if(err){
-      console.log('Ocurrio un error')
-    } else{
-      console.log("mensaje enviado")
+    err => {
+      if (err) {
+        console.log("Ocurrio un error");
+      } else {
+        console.log("mensaje enviado");
+      }
     }
-  }
-  )
-
+  );
 }
 
 /*

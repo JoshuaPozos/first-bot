@@ -1,0 +1,43 @@
+curl -X POST -H "Content-Type: application/json" -d '{
+  "persistent_menu": [
+    {
+      "locale": "default",
+      "composer_input_disabled": false,
+      "call_to_actions": [
+        {
+          "title": "Tester Page",
+          "type": "nested",
+          "call_to_actions": [
+            {
+              "title": "Acerca",
+              "type": "postback",
+              "payload": "ABOUT_PAYLOAD"
+            }
+          ]
+        },
+        {
+          "title": "Opciones",
+          "type": "nested",
+          "call_to_actions": [
+            {
+              "title": "Info",
+              "type": "postback",
+              "payload": "INFO_PAYLOAD"
+            },
+            {
+              "title": "Github",
+              "type": "postback",
+              "payload": "GITHUB_PAYLOAD"
+            }
+          ]
+        },
+        {
+          "title": "Website",
+          "type": "web_url",
+          "url": "https://pozoss.com/",
+          "webview_height_ratio": "full"
+        }
+      ]
+    }
+  ]
+}' "https://graph.facebook.com/v2.11/me/messenger_profile?access_token=<ACCESS_TOKEN>"
